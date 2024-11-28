@@ -62,10 +62,10 @@ init_session_state()
 
 # 게임 리셋 함수
 def reset_game():
-    difficulty = st.session_state.get('difficulty', 'normal')
-    if difficulty == 'easy':
+    difficulty = st.session_state.get('current_difficulty', '보통')
+    if difficulty == '쉬움':
         st.session_state.random_number = random.randint(1, 50)
-    elif difficulty == 'normal':
+    elif difficulty == '보통':
         st.session_state.random_number = random.randint(1, 100)
     else:
         st.session_state.random_number = random.randint(1, 200)
@@ -95,15 +95,18 @@ def main_game():
                             key='game_mode_select')
         
         # 난이도 선택
+        if 'current_difficulty' not in st.session_state:
+            st.session_state.current_difficulty = '보통'
+            
         difficulty = st.selectbox("난이도 선택:", 
                                 ['쉬움 (1-50)', '보통 (1-100)', '어려움 (1-200)'],
-                                key='difficulty')
+                                key='difficulty_select')
         
         # 시간 제한 설정
         time_limit = st.slider("시간 제한 (초):", 30, 180, 60)
         
         if st.button("새 게임 시작"):
-            st.session_state.difficulty = difficulty.split()[0].lower()
+            st.session_state.current_difficulty = difficulty.split()[0].lower()
             reset_game()
             if game_mode == '멀티플레이어':
                 st.session_state.game_mode = 'multi'
